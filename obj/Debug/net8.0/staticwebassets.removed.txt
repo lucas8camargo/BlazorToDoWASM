@@ -1,0 +1,8 @@
+C:\Users\Lucas\Documents\GitHub\BlazorToDoWASM\wwwroot\css\app.css
+C:\Users\Lucas\Documents\GitHub\BlazorToDoWASM\wwwroot\css\bootstrap\bootstrap.min.css
+C:\Users\Lucas\Documents\GitHub\BlazorToDoWASM\wwwroot\css\bootstrap\bootstrap.min.css.map
+C:\Users\Lucas\Documents\GitHub\BlazorToDoWASM\wwwroot\css\todo-styles.css
+C:\Users\Lucas\Documents\GitHub\BlazorToDoWASM\wwwroot\favicon.png
+C:\Users\Lucas\Documents\GitHub\BlazorToDoWASM\wwwroot\icon-192.png
+C:\Users\Lucas\Documents\GitHub\BlazorToDoWASM\wwwroot\index.html
+C:\Users\Lucas\Documents\GitHub\BlazorToDoWASM\wwwroot\sample-data\weather.json

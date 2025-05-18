@@ -1,0 +1,2 @@
+C:\Users\Lucas\Documents\GitHub\BlazorToDoWASM\publish\emcc-props.json
+C:\Users\Lucas\Documents\GitHub\BlazorToDoWASM\publish\web.config
