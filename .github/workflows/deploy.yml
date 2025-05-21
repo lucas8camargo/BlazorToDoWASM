@@ -1,2 +1,32 @@
-- name: Clean
-  run: dotnet clean && rm -rf bin obj
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Setup .NET Core SDK
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 8.0.x
+          
+      - name: Publish .NET Core Project
+        run: dotnet publish BlazorToDoWASM.csproj -c Release -o release --nologo
+      
+      - name: Create .nojekyll file
+        run: touch release/wwwroot/.nojekyll
+        
+      - name: Adjust base href
+        run: sed -i 's|<base href="/" />|<base href="/BlazorToDoWASM/" />|g' release/wwwroot/index.html
+          
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@4.1.4
+        with:
+          branch: main
+          folder: release/wwwroot
