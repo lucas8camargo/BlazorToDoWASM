@@ -19,27 +19,28 @@ jobs:
       - name: Publish .NET Core Project
         run: dotnet publish BlazorToDoWASM.csproj -c Release -o release --nologo
       
-      - name: Adjust base href
-        run: sed -i 's|<base href="/" />|<base href="/BlazorToDoWASM/" />|g' index.html
+      - name: Adjust index.html
+        run: |
+          if [ -f "release/wwwroot/index.html" ]; then
+            sed -i 's|<base href="/" />|<base href="/BlazorToDoWASM/" />|g' release/wwwroot/index.html
+          elif [ -f "release/index.html" ]; then
+            sed -i 's|<base href="/" />|<base href="/BlazorToDoWASM/" />|g' release/index.html
+          fi
       
       - name: Create .nojekyll file
-        run: touch .nojekyll
-        
-      - name: Copy published files to root
         run: |
-          # Determine the wwwroot directory
           if [ -d "release/wwwroot" ]; then
-            PUBLISH_DIR="release/wwwroot"
+            touch release/wwwroot/.nojekyll
           else
-            PUBLISH_DIR="release"
+            touch release/.nojekyll
           fi
-          
-          # Copy all files from publish directory to root
-          cp -r $PUBLISH_DIR/* .
-          
-      - name: Commit and push changes
-        run: |
-          git config --global user.name 'GitHub Actions'
-          git config --global user.email 'actions@github.com'
-          git add -A
-          git commit -m "Update GitHub Pages" || echo "No changes to co
+        
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v3
+        
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@4.1.4
+        with:
+          branch: gh-pages  # Implanta em um branch separado
+          folder: release/wwwroot  # Ajuste conforme necessário
+          clean: true  # Remove arquivos antigos
