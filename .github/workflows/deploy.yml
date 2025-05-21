@@ -19,14 +19,47 @@ jobs:
       - name: Publish .NET Core Project
         run: dotnet publish BlazorToDoWASM.csproj -c Release -o release --nologo
       
+      - name: List directory structure
+        run: find release -type f -name "index.html" | sort
+        
       - name: Create .nojekyll file
-        run: touch .nojekyll
+        run: |
+          # Encontrar o diretório wwwroot dentro da estrutura de release
+          WWWROOT_DIR=$(find release -type d -name "wwwroot" | head -n 1)
+          if [ -z "$WWWROOT_DIR" ]; then
+            echo "Directory wwwroot not found. Creating .nojekyll in release directory"
+            touch release/.nojekyll
+          else
+            echo "Creating .nojekyll in $WWWROOT_DIR"
+            touch $WWWROOT_DIR/.nojekyll
+          fi
         
       - name: Adjust base href
-        run: sed -i 's|<base href="/" />|<base href="/BlazorToDoWASM/" />|g' ./index.html
+        run: |
+          # Encontrar o arquivo index.html
+          INDEX_PATH=$(find release -type f -name "index.html" | head -n 1)
+          if [ -n "$INDEX_PATH" ]; then
+            echo "Found index.html at $INDEX_PATH"
+            sed -i 's|<base href="/" />|<base href="/BlazorToDoWASM/" />|g' "$INDEX_PATH"
+            echo "Content of index.html after modification:"
+            cat "$INDEX_PATH"
+          else
+            echo "index.html not found in release directory structure"
+            exit 1
+          fi
+          
+      - name: Determine publish directory
+        id: publish_dir
+        run: |
+          WWWROOT_DIR=$(find release -type d -name "wwwroot" | head -n 1)
+          if [ -z "$WWWROOT_DIR" ]; then
+            echo "::set-output name=dir::release"
+          else
+            echo "::set-output name=dir::$WWWROOT_DIR"
+          fi
           
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@4.1.4
         with:
           branch: main
-          folder: release/wwwroot
+          folder: ${{ steps.publish_dir.outputs.dir }}
